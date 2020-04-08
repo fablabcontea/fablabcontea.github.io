@@ -74,7 +74,7 @@ function getExample(name) {
 <title>OpenJsCad</title>  
 </head>
 <body onload="onload()">
-  <h1>OpenJsCad</h1>
+  <h1>Spaghetti-Mask</h1>
 Web based solid modeling in Javascript: user editable parametric models, STL and DXF export.
 <div id="viewer"></div>
   <h2>Playground</h2>
@@ -206,10 +206,6 @@ function involuteGear(numTeeth, circularPitch, pressureAngle, clearance, thickne
   <select id="example_files">
     <option value="gears.jscad">Involute Gears</option>
     <option value="coupler.jscad">Parametric Axis Coupler</option>
-    <option value="grille.jscad">Parametric Grille</option>
-    <option value="hook.jscad">Parametric S Hook (extrude 2d paths)</option>
-    <option value="lampshade.jscad">Parametric Lampshade (3d design to 2d panels for CNC/laser cutting)</option>
-    <option value="ring.jscad">Celtic Knot Ring</option>
     <option value="servo.jscad">Servo motor (properties &amp; connectors</option>
   </select>
   <input id="render_example" type="submit" value="Update" onclick="getExample(document.getElementById('example_files').value); return false;">
