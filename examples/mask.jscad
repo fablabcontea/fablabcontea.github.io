@@ -1,7 +1,7 @@
 function getParameterDefinitions() {
     return [
-        //{ name: 'base_faccia', type: 'slider', min: 62, max: 140, caption: 'base faccia (mm)',initial: 110},
-        //{ name: 'naso', type: 'slider', min: 0, max: 70, caption: 'naso (mm)', initial: 40},
+        { name: 'base_faccia', type: 'float', caption: 'base faccia (mm)',initial: 110},
+        { name: 'naso', type: 'float', caption: 'naso (mm)', initial: 40},
         { name: 'nozzle', type: 'choice', caption: 'nozzle', values: [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2], captions: ['0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9','1.0','1.1','1.2'], initial: 0.8 },
         { name: 'rounded', type: 'choice', caption: 'spessore pareti maschera', values: [1, 2, 3], captions: ['nozzle x 1', 'nozzle x 2', 'nozzle x 3'], initial: 2 },
     ];
@@ -11,6 +11,14 @@ function getParameterDefinitions() {
 
 
 function main(params){
+    
+    if(params.base_faccia <= 62) throw new Error("il valore deve essere maggiore di 62 mm!");
+    if(params.base_faccia >= 140) throw new Error("il valore deve essere minore di 140 mm!");
+
+    if(params.naso <= 0) throw new Error("il valore deve essere maggiore di 0 mm!");
+    if(params.naso >= 70) throw new Error("il valore deve essere minore di 70 mm!");
+    
+    
     var base_faccia = params.base_faccia*1.07;
     var nasone = params.naso*1.25;
     var Dz = (params.naso+(15)); //sostituire nasone con DZ
