@@ -220,7 +220,7 @@ CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
 .transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 180))
 .translate([0,0,-19])])]).translate([0,0,-6.4]);
 
-if(visualizza == 0)
+if(params.vfilter == 0)
   {
     return [mask];
   }
@@ -228,7 +228,6 @@ if(visualizza == 0)
   {
     return [filter,mask];
   }
-  
 
   
     
