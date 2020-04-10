@@ -646,8 +646,8 @@ OpenJsCad.Processor = function(containerdiv, options, onchange) {
   this.options.verbose = !!this.cleanOption(options.verbose, true);
 
   // default applies unless sizes specified in options
-  this.widthDefault = "600px";
-  this.heightDefault = "480px";
+  this.widthDefault = "800px";
+  this.heightDefault = "600px";
 
   this.viewerdiv = null;
   this.viewer = null;
@@ -724,7 +724,7 @@ OpenJsCad.Processor.prototype = {
     }
   
     var viewerdiv = document.createElement("div");
-    viewerdiv.className = "viewer";
+    viewerdiv.className = "row gtr-uniform";
     this.containerdiv.appendChild(viewerdiv);
     this.viewerdiv = viewerdiv;
     this.viewer = new OpenJsCad.Viewer(this.viewerdiv, this.viewerSize, this.options);
@@ -732,8 +732,8 @@ OpenJsCad.Processor.prototype = {
     this.errorpre = document.createElement("pre");
     this.errordiv.appendChild(this.errorpre);
     this.statusdiv = document.createElement("div");
-    this.statusdiv.className = "statusdiv";
-    // surface/line draw
+    this.statusdiv.className = "row gtr-uniform";
+    // surface/line draw "actions stacked"
     this.controldiv = document.createElement("div");
     var this_ = this;
     [['faces', 'surfaces', this.options.drawFaces],
@@ -782,7 +782,7 @@ OpenJsCad.Processor.prototype = {
     this.downloadOutputFileLink = document.createElement("a");
     this.statusbuttons.appendChild(this.downloadOutputFileLink);
     this.parametersdiv = document.createElement("div");
-    this.parametersdiv.className = "parametersdiv";
+    this.parametersdiv.className = "header";
     var headerdiv = document.createElement("div");
     headerdiv.textContent = "Parameters:";
     headerdiv.className = "header";
