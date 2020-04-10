@@ -646,8 +646,8 @@ OpenJsCad.Processor = function(containerdiv, options, onchange) {
   this.options.verbose = !!this.cleanOption(options.verbose, true);
 
   // default applies unless sizes specified in options
-  this.widthDefault = "800px";
-  this.heightDefault = "600px";
+  this.widthDefault = "600px";
+  this.heightDefault = "480px";
 
   this.viewerdiv = null;
   this.viewer = null;
@@ -947,9 +947,9 @@ OpenJsCad.Processor.prototype = {
     this.formatDropdown.style.display = ((!this.hasOutputFile)&&(this.hasValidCurrentObject))? "inline":"none";
     this.generateOutputFileButton.style.display = ((!this.hasOutputFile)&&(this.hasValidCurrentObject))? "inline":"none";
     this.downloadOutputFileLink.style.display = this.hasOutputFile? "inline":"none";
-    this.parametersdiv.style.display = (this.paramControls.length > 0)? "block":"none";
-    this.errordiv.style.display = this.hasError? "block":"none";
-    this.statusdiv.style.display = this.hasError? "none":"block";
+    this.parametersdiv.style.display = (this.paramControls.length > 0)? "box":"none";
+    this.errordiv.style.display = this.hasError? "box":"none";
+    this.statusdiv.style.display = this.hasError? "none":"box";
   },
 
   setOpenJsCadPath: function(path) {

@@ -646,8 +646,8 @@ OpenJsCad.Processor = function(containerdiv, options, onchange) {
   this.options.verbose = !!this.cleanOption(options.verbose, true);
 
   // default applies unless sizes specified in options
-  this.widthDefault = "800px";
-  this.heightDefault = "600px";
+  this.widthDefault = "600px";
+  this.heightDefault = "480px";
 
   this.viewerdiv = null;
   this.viewer = null;
