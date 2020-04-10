@@ -68,333 +68,283 @@
 					</section>
 
 				<!-- Main -->
-					<div id="main">
-						<script>
-
-							var gProcessor=null;
-							
-							// Show all exceptions to the user:
-							OpenJsCad.AlertUserOfUncaughtExceptions();
-							
-							function onload()
-							{
-							  gProcessor = new OpenJsCad.Processor(document.getElementById("viewer"));
-							  updateSolid();
-							}
-							
-							function updateSolid()
-							{
-							  gProcessor.setJsCad(document.getElementById('code').value);
-							}
-							function getExample(name) {
-							  var el = document.getElementById('code');
-							  $.get('examples/' + name, function(data) {
-								el.value = data;
-								updateSolid();
-							  });
-							}
-							</script>
-							<title>Spaghetti Mask</title>  
-							</head>
-							<body onload="onload()">
-							  <h1>Spaghetti-Mask</h1>
-							  <img src="spaghetti_mask.png"></img>
-							An OpenJScad Mask parametric, 3d printable, reusable with interchange filter.
-							<div id="viewer"></div>
-							  <br>
-							<input type="submit" value="Update" onclick="updateSolid(); return false;">
-							<h2>Expert Mod</h2>
-							if you want partecipate in design spaghetti mask, try to modify the code below, update the render, and collaborate at the project via github :<href ="https://github.com/fablabcontea/fablabcontea.github.io">spaghetti_mask</href>
-							<br><br> 
-							<textarea id="code">
-							function getParameterDefinitions() {
-								return [
-									{ name: 'base_faccia', type: 'float', caption: 'base faccia (mm)',initial: 110},
-									{ name: 'naso', type: 'float', caption: 'naso (mm)', initial: 40},
-									{ name: 'nozzle', type: 'choice', caption: 'nozzle', values: [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2], captions: ['0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9','1.0','1.1','1.2'], initial: 0.8 },
-									{ name: 'rounded', type: 'choice', caption: 'spessore pareti maschera', values: [1, 2, 3], captions: ['nozzle x 1', 'nozzle x 2', 'nozzle x 3'], initial: 2 },
-								   // { name: 'vfilter', type: 'choice', caption: 'visualizza filtro', values: [1, 0], captions: ['si', 'no'], initial: 2 },
-								];
-							}
-							
-							
-							
-							
-							function main(params){
-								
-								if(params.base_faccia <= 62) throw new Error("il valore deve essere maggiore di 62 mm!");
-								if(params.base_faccia >= 140) throw new Error("il valore deve essere minore di 140 mm!");
-							
-								if(params.naso <= 0) throw new Error("il valore deve essere maggiore di 0 mm!");
-								if(params.naso >= 70) throw new Error("il valore deve essere minore di 70 mm!");
-								
-								
-								var base_faccia = params.base_faccia*1.07;
-								var nasone = params.naso*1.25;
-								var Dz = (params.naso+(15)); //sostituire nasone con DZ
-								var filtro_standard = 110;
-								var Dx = (filtro_standard/3.6);
-								var Dy = (base_faccia/2);
-								var Ex = params.nozzle*params.rounded;
-								var Sp = 5;
-								var kerf = 0.3; 
-							   // var filter;
-								//var mask;
-								//var visualizza = new CSG();
-							
-							
-							
-							var mask = CSG.cylinder({start: [0,0,0], end: [0,0,nasone],radiusStart: Dx+(Ex/2), radiusEnd: Dy, resolution: 100}).setColor(0,0.502,0)
-										.translate([3,0,0])
-											.translate([-3,0,0])
-												.union([CSG.cylinder({start: [0,0,0], end: [0,0,Sp],radiusStart: Dx, radiusEnd: Dx+(Ex/2), resolution: 100})
-												.translate([3,0,-Sp])
-												.translate([-3,0,0]),CSG
-												.cube({center: [0,0,0],radius: [Dx/0.76,11.5,Sp/2], resolution: 16}).setColor(0,0.505,0)
-												.rotateX(0).rotateY(0).rotateZ(-60)
-												.translate([3,0,-2.5])
-												.translate([-3,0,0]),CSG
-												.cube({center: [0,0,0],radius: [Dx/0.76,11.5,Sp/2], resolution: 16}).setColor(0,0.505,0)
-												.rotateX(0).rotateY(0).rotateZ(60)
-												.translate([3,0,-Sp/2])
-												.translate([-3,0,0])])
-												.subtract([CSG.cylinder({start: [0,0,0], end: [0,0,nasone*1.01],radiusStart: Dx-(Ex/2), radiusEnd: Dy-Ex, resolution: 100})
-												.translate([3,0,0])
-												.translate([-3,0,0])
-												.union([
-													CSG.cylinder({start: [0,0,0], end: [0,0,15],radiusStart: 25, radiusEnd: 22, resolution: 100})
-												.translate([3,0,-5])
-												.translate([-3,0,0])]),
-							//fori per tiro maschera
-							CSG.cube({center: [0,0,0],radius: [2.5,7.5,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
-							.translate([17,20.5+9,-5]),
-							CSG.cube({center: [0,0,0],radius: [2.5,7.5,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
-							.translate([17,20.5+9,-5])
-							.mirrored(CSG.Plane.fromNormalAndPoint([1,0,0], [0,0,0])),
-							CSG.cube({center: [0,0,0],radius: [2.5,7.5,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
-							.translate([17,20.5+9,-5])
-							.mirrored(CSG.Plane.fromNormalAndPoint([0,1,0], [0,0,0])),
-							CSG.cube({center: [0,0,0],radius: [2.5,7.5,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
-							.translate([17,(20.5+9),-5])
-							.mirrored(CSG.Plane.fromNormalAndPoint([0,1,0], [0,0,0]))
-							.mirrored(CSG.Plane.fromNormalAndPoint([1,0,0], [0,0,0]))]);
-							
-							
-							//filtro standard
-							
-							var filter = CSG.cylinder({start: [0,0,0], end: [0,0,40],radiusStart: 25.462962962962962, radiusEnd: 30.555555555555554, resolution: 100})
-							.translate([0,0,-40])
-							.translate([0,0,2])
-							.union([CSG.cylinder({start: [0,0,0], end: [0,0,34],radiusStart: 16.975308641975307, radiusEnd: 36.28333333333334, resolution: 100})
-							
-							.translate([0,0,-30])
-							.translate([0,0,2]),
-							
-							
-							//CSG.cube({center: [0,0,0],radius: [5,10,20], resolution: 16}).setColor(0,0.402,0)
-							//.rotateX(0).rotateY(10).rotateZ(0)
-							//.translate([15,0,-35]),
-							
-							//X superiore filtro
-							CSG.cube({center: [0,0,0],radius: [30,11.5,2.5], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(-60).translate([0,0,-37.5])
-							.translate([0,0,2]),
-							
-							CSG.cube({center: [0,0,0],radius: [30,11.5,2.5], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60).translate([0,0,-37.5])
-							
-							.translate([0,0,2])])
-							
-							//oring interno filtro
-							.subtract([CSG.cylinder({start: [0,0,0], end: [0,0,5],radiusStart: 29, radiusEnd: 27, resolution: 100}).setColor(0,0.505,0).subtract([CSG.cylinder({start: [0,0,0], end: [0,0,5],radiusStart: 22, radiusEnd: 24, resolution: 100})])
-							.translate([0,0,-4]),
-							
-							//.subtract([CSGcylinder({start:[0,0,0], end:[0,0,16],radiusStart: 20, radiusEnd: 20, resolution: 100})]),
-							
-							//.subtract([CSG.cube({center: [0,0,0],radius: [18.77777777777778,24.77777777777778,1], resolution: 16})
-							//.subtract([CSG.cube({center: [0,0,0],radius: [17.27777777777778,23.27777777777778,1], resolution: 16})]),
-							
-							//foro filtro 
-							CSG.cylinder({start: [0,0,0], end: [0,0,28],radiusStart: 19, radiusEnd: 19, resolution: 100}).translate([0,0,-34]),
-							CSG.cylinder({start: [0,0,0], end: [0,0,8],radiusStart: 19, radiusEnd: 17, resolution: 100}).translate([0,0,-6]),
-							//CSG.cube({center: [0,0,0],radius: [15.277777777777777,20.27777777777778,25], resolution: 16}).translate([0,0,-7]),
-							
-							CSG.cylinder({start: [0,0,0], end: [0,0,5.3],radiusStart: 30.855555555555554, radiusEnd: 30.855555555555554, resolution: 100}).translate([0,0,1]),
-							//incastro filtro con maschera
-							CSG.cube({center: [0,0,0],radius: [39.87222222222222,13,2.65], resolution: 16}).rotateX(0).rotateY(0).rotateZ(90).translate([0,0,3.65]),
-							
-							CSG.cube({center: [0,0,0],radius: [39.87222222222222,13,2.65], resolution: 16}).rotateX(0).rotateY(0).rotateZ(-60).translate([0,0,3.65]),
-							
-							CSG.cube({center: [0,0,0],radius: [39.87222222222222,13,2.65], resolution: 16}).rotateX(0).rotateY(0).rotateZ(60).translate([0,0,3.65]),
-							
-							//spazio ulteriore per elastici parte vicino maschera
-							CSG.cube({center: [0,0,0],radius: [3.5,13,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
-							.translate([17,20.5+9,-2]),
-							
-							CSG.cube({center: [0,0,0],radius: [3.5,13,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
-							.translate([17,20.5+9,2])
-							.mirrored(CSG.Plane.fromNormalAndPoint([1,0,0], [0,0,0])),
-							
-							CSG.cube({center: [0,0,0],radius: [3.5,13,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
-							.translate([17,20.5+9,2])
-							.mirrored(CSG.Plane.fromNormalAndPoint([0,1,0], [0,0,0])),
-							
-							CSG.cube({center: [0,0,0],radius: [3.5,13,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
-							.translate([17,20.5+9,2])
-							.mirrored(CSG.Plane.fromNormalAndPoint([0,1,0], [0,0,0]))
-							.mirrored(CSG.Plane.fromNormalAndPoint([1,0,0], [0,0,0])),
-							
-							//fori esterni per elastici parte lontano maschera
-							CSG.cube({center: [0,0,0],radius: [1.5,7.5,5.025], resolution: 16}).setColor(0,0.402,0)
-							.rotateX(0).rotateY(38).rotateZ(60)
-							.translate([12.5,22,-35]),
-							
-							CSG.cube({center: [0,0,0],radius: [1.5,7.5,5.025], resolution: 16}).setColor(0,0.502,0)
-							.rotateX(0).rotateY(38).rotateZ(60)
-							.translate([12.5,22,-35])
-							.mirrored(CSG.Plane.fromNormalAndPoint([1,0,0], [0,0,0])),
-							
-							CSG.cube({center: [0,0,0],radius: [1.5,7.5,5.025], resolution: 16}).setColor(0,0.502,0)
-							.rotateX(0).rotateY(38).rotateZ(60)
-							.translate([12.5,22,-35])
-							.mirrored(CSG.Plane.fromNormalAndPoint([0,1,0], [0,0,0])),
-							
-							CSG.cube({center: [0,0,0],radius: [1.5,7.5,25.025], resolution: 16}).setColor(0,0.502,0).rotateX(0)
-							.rotateY(38).rotateZ(60)
-							.translate([12.5,22,-35])
-							.mirrored(CSG.Plane.fromNormalAndPoint([0,1,0], [0,0,0]))
-							.mirrored(CSG.Plane.fromNormalAndPoint([1,0,0], [0,0,0])),
-							// alleggerimento
-							
-							
-							CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 0))
-							.translate([0,0,-19])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 9))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 18))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 27))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 36))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 45))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 54))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 63))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 72))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 81))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 90))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 99))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 108))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 117))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 126))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 135))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 144))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 153))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 162))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 171))
-							.translate([0,0,-19])])
-							.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
-							.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 180))
-							.translate([0,0,-19])])]).translate([0,0,-6.4]);
-							
-							
-							
-							return [mask, filter];
-								
-							}
-							
-							
-							</textarea>
-						<!-- One -->
-							<section id="one">
-								<div class="inner">
-									<div class="content">
-										<div class="inner">
-											<header class="major">
-												<h3>What you need:</h3>
-											</header>
-													<h4>Ingredients list</h4>
-													<div class="table-wrapper">
-														<table>
-															<thead>
-																<tr>
-																	<th>Number</th>
-																	<th>Description</th>
-																	<th>where I can find?</th>
-																</tr>
-															</thead>
-															<tbody>
-																<tr>
-																	<td>1</td>
-																	<td>your mask 3d printed, with your measure</td>
-																	<td>*fablab or who have 3d printer</td>
-																</tr>
-																<tr>
-																	<td>2</td>
-																	<td>Standard filter 3d printed, it's standard measure</td>
-																	<td>*fablab or who have 3d printer</td>
-																</tr>
-																<tr>
-																	<td>3</td>
-																	<td> steril gauze TNT nonwoven fabric,measure 10cmx10cm or a better type of filtration that you have find</td>
-																	<td>Drug store</td>
-																</tr>
-																<tr>
-																	<td>4</td>
-																	<td>A pot for pasta :)</td>
-																	<td>in your kitchen</td>
-																</tr>
-																<tr>
-																	<td>5</td>
-																	<td>2 x badge holder, if you go to conference or similar you have in your house a lot</td>
-																	<td>find in your house</td>
-																</tr>
-															</tbody>
-															
-														</table>
-													</div>
-
-											<p>*You don't know where is a fablab near you?</p>
-											<ul class="actions">
-												<li><a href="https://fablabs.io/labs/map" class="button">Find here fablab</a></li>
-											</ul>
-											<p>*You don't know where is a 3dprinter near you?</p>
-											<ul class="actions">
-												<li><a href="http://https://www.3dhubs.com/" class="button">Find here 3dprinter</a></li>
-											</ul>
+				<section id="onemain">
+					<div class="inner">
+						<div class="content">
+							<div class="inner">
+								<header class="major">
+									<h3>Main dishes</h3>
+								</header>
+										<script>
+				
+											var gProcessor=null;
+											
+											// Show all exceptions to the user:
+											OpenJsCad.AlertUserOfUncaughtExceptions();
+											
+											function onload()
+											{
+											  gProcessor = new OpenJsCad.Processor(document.getElementById("viewer"));
+											  updateSolid();
+											}
+											
+											function updateSolid()
+											{
+											  gProcessor.setJsCad(document.getElementById('code').value);
+											}
+											function getExample(name) {
+											  var el = document.getElementById('code');
+											  $.get('examples/' + name, function(data) {
+												el.value = data;
+												updateSolid();
+											  });
+											}
+										</script>
+											
+											
+											<body onload="onload()">
+											  <h1>Spaghetti-Mask</h1>
+											  <img src="spaghetti_mask.png"></img>
+											An OpenJScad Mask parametric, 3d printable, reusable with interchange filter.
+											<div id="viewer"></div>
+											  <br>
+											<input type="submit" value="Update" onclick="updateSolid(); return false;">
+											<h2>Expert Mod</h2>
+											if you want partecipate in design spaghetti mask, try to modify the code below, update the render, and collaborate at the project via github :<href ="https://github.com/fablabcontea/fablabcontea.github.io">spaghetti_mask</href>
+											<br><br> 
+											<textarea id="code">
+											function getParameterDefinitions() {
+												return [
+													{ name: 'base_faccia', type: 'float', caption: 'base faccia (mm)',initial: 110},
+													{ name: 'naso', type: 'float', caption: 'naso (mm)', initial: 40},
+													{ name: 'nozzle', type: 'choice', caption: 'nozzle', values: [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2], captions: ['0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9','1.0','1.1','1.2'], initial: 0.8 },
+													{ name: 'rounded', type: 'choice', caption: 'spessore pareti maschera', values: [1, 2, 3], captions: ['nozzle x 1', 'nozzle x 2', 'nozzle x 3'], initial: 2 },
+												   // { name: 'vfilter', type: 'choice', caption: 'visualizza filtro', values: [1, 0], captions: ['si', 'no'], initial: 2 },
+												];
+											}
+											
+											
+											
+											
+											function main(params){
+												
+												if(params.base_faccia <= 62) throw new Error("il valore deve essere maggiore di 62 mm!");
+												if(params.base_faccia >= 140) throw new Error("il valore deve essere minore di 140 mm!");
+											
+												if(params.naso <= 0) throw new Error("il valore deve essere maggiore di 0 mm!");
+												if(params.naso >= 70) throw new Error("il valore deve essere minore di 70 mm!");
+												
+												
+												var base_faccia = params.base_faccia*1.07;
+												var nasone = params.naso*1.25;
+												var Dz = (params.naso+(15)); //sostituire nasone con DZ
+												var filtro_standard = 110;
+												var Dx = (filtro_standard/3.6);
+												var Dy = (base_faccia/2);
+												var Ex = params.nozzle*params.rounded;
+												var Sp = 5;
+												var kerf = 0.3; 
+											   // var filter;
+												//var mask;
+												//var visualizza = new CSG();
+											
+											
+											
+											var mask = CSG.cylinder({start: [0,0,0], end: [0,0,nasone],radiusStart: Dx+(Ex/2), radiusEnd: Dy, resolution: 100}).setColor(0,0.502,0)
+														.translate([3,0,0])
+															.translate([-3,0,0])
+																.union([CSG.cylinder({start: [0,0,0], end: [0,0,Sp],radiusStart: Dx, radiusEnd: Dx+(Ex/2), resolution: 100})
+																.translate([3,0,-Sp])
+																.translate([-3,0,0]),CSG
+																.cube({center: [0,0,0],radius: [Dx/0.76,11.5,Sp/2], resolution: 16}).setColor(0,0.505,0)
+																.rotateX(0).rotateY(0).rotateZ(-60)
+																.translate([3,0,-2.5])
+																.translate([-3,0,0]),CSG
+																.cube({center: [0,0,0],radius: [Dx/0.76,11.5,Sp/2], resolution: 16}).setColor(0,0.505,0)
+																.rotateX(0).rotateY(0).rotateZ(60)
+																.translate([3,0,-Sp/2])
+																.translate([-3,0,0])])
+																.subtract([CSG.cylinder({start: [0,0,0], end: [0,0,nasone*1.01],radiusStart: Dx-(Ex/2), radiusEnd: Dy-Ex, resolution: 100})
+																.translate([3,0,0])
+																.translate([-3,0,0])
+																.union([
+																	CSG.cylinder({start: [0,0,0], end: [0,0,15],radiusStart: 25, radiusEnd: 22, resolution: 100})
+																.translate([3,0,-5])
+																.translate([-3,0,0])]),
+											//fori per tiro maschera
+											CSG.cube({center: [0,0,0],radius: [2.5,7.5,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
+											.translate([17,20.5+9,-5]),
+											CSG.cube({center: [0,0,0],radius: [2.5,7.5,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
+											.translate([17,20.5+9,-5])
+											.mirrored(CSG.Plane.fromNormalAndPoint([1,0,0], [0,0,0])),
+											CSG.cube({center: [0,0,0],radius: [2.5,7.5,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
+											.translate([17,20.5+9,-5])
+											.mirrored(CSG.Plane.fromNormalAndPoint([0,1,0], [0,0,0])),
+											CSG.cube({center: [0,0,0],radius: [2.5,7.5,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
+											.translate([17,(20.5+9),-5])
+											.mirrored(CSG.Plane.fromNormalAndPoint([0,1,0], [0,0,0]))
+											.mirrored(CSG.Plane.fromNormalAndPoint([1,0,0], [0,0,0]))]);
+											
+											
+											//filtro standard
+											
+											var filter = CSG.cylinder({start: [0,0,0], end: [0,0,40],radiusStart: 25.462962962962962, radiusEnd: 30.555555555555554, resolution: 100})
+											.translate([0,0,-40])
+											.translate([0,0,2])
+											.union([CSG.cylinder({start: [0,0,0], end: [0,0,34],radiusStart: 16.975308641975307, radiusEnd: 36.28333333333334, resolution: 100})
+											
+											.translate([0,0,-30])
+											.translate([0,0,2]),
+											
+											
+											//CSG.cube({center: [0,0,0],radius: [5,10,20], resolution: 16}).setColor(0,0.402,0)
+											//.rotateX(0).rotateY(10).rotateZ(0)
+											//.translate([15,0,-35]),
+											
+											//X superiore filtro
+											CSG.cube({center: [0,0,0],radius: [30,11.5,2.5], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(-60).translate([0,0,-37.5])
+											.translate([0,0,2]),
+											
+											CSG.cube({center: [0,0,0],radius: [30,11.5,2.5], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60).translate([0,0,-37.5])
+											
+											.translate([0,0,2])])
+											
+											//oring interno filtro
+											.subtract([CSG.cylinder({start: [0,0,0], end: [0,0,5],radiusStart: 29, radiusEnd: 27, resolution: 100}).setColor(0,0.505,0).subtract([CSG.cylinder({start: [0,0,0], end: [0,0,5],radiusStart: 22, radiusEnd: 24, resolution: 100})])
+											.translate([0,0,-4]),
+											
+											//.subtract([CSGcylinder({start:[0,0,0], end:[0,0,16],radiusStart: 20, radiusEnd: 20, resolution: 100})]),
+											
+											//.subtract([CSG.cube({center: [0,0,0],radius: [18.77777777777778,24.77777777777778,1], resolution: 16})
+											//.subtract([CSG.cube({center: [0,0,0],radius: [17.27777777777778,23.27777777777778,1], resolution: 16})]),
+											
+											//foro filtro 
+											CSG.cylinder({start: [0,0,0], end: [0,0,28],radiusStart: 19, radiusEnd: 19, resolution: 100}).translate([0,0,-34]),
+											CSG.cylinder({start: [0,0,0], end: [0,0,8],radiusStart: 19, radiusEnd: 17, resolution: 100}).translate([0,0,-6]),
+											//CSG.cube({center: [0,0,0],radius: [15.277777777777777,20.27777777777778,25], resolution: 16}).translate([0,0,-7]),
+											
+											CSG.cylinder({start: [0,0,0], end: [0,0,5.3],radiusStart: 30.855555555555554, radiusEnd: 30.855555555555554, resolution: 100}).translate([0,0,1]),
+											//incastro filtro con maschera
+											CSG.cube({center: [0,0,0],radius: [39.87222222222222,13,2.65], resolution: 16}).rotateX(0).rotateY(0).rotateZ(90).translate([0,0,3.65]),
+											
+											CSG.cube({center: [0,0,0],radius: [39.87222222222222,13,2.65], resolution: 16}).rotateX(0).rotateY(0).rotateZ(-60).translate([0,0,3.65]),
+											
+											CSG.cube({center: [0,0,0],radius: [39.87222222222222,13,2.65], resolution: 16}).rotateX(0).rotateY(0).rotateZ(60).translate([0,0,3.65]),
+											
+											//spazio ulteriore per elastici parte vicino maschera
+											CSG.cube({center: [0,0,0],radius: [3.5,13,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
+											.translate([17,20.5+9,-2]),
+											
+											CSG.cube({center: [0,0,0],radius: [3.5,13,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
+											.translate([17,20.5+9,2])
+											.mirrored(CSG.Plane.fromNormalAndPoint([1,0,0], [0,0,0])),
+											
+											CSG.cube({center: [0,0,0],radius: [3.5,13,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
+											.translate([17,20.5+9,2])
+											.mirrored(CSG.Plane.fromNormalAndPoint([0,1,0], [0,0,0])),
+											
+											CSG.cube({center: [0,0,0],radius: [3.5,13,5.025], resolution: 16}).setColor(0,0.502,0).rotateX(0).rotateY(0).rotateZ(60)
+											.translate([17,20.5+9,2])
+											.mirrored(CSG.Plane.fromNormalAndPoint([0,1,0], [0,0,0]))
+											.mirrored(CSG.Plane.fromNormalAndPoint([1,0,0], [0,0,0])),
+											
+											//fori esterni per elastici parte lontano maschera
+											CSG.cube({center: [0,0,0],radius: [1.5,7.5,5.025], resolution: 16}).setColor(0,0.402,0)
+											.rotateX(0).rotateY(38).rotateZ(60)
+											.translate([12.5,22,-35]),
+											
+											CSG.cube({center: [0,0,0],radius: [1.5,7.5,5.025], resolution: 16}).setColor(0,0.502,0)
+											.rotateX(0).rotateY(38).rotateZ(60)
+											.translate([12.5,22,-35])
+											.mirrored(CSG.Plane.fromNormalAndPoint([1,0,0], [0,0,0])),
+											
+											CSG.cube({center: [0,0,0],radius: [1.5,7.5,5.025], resolution: 16}).setColor(0,0.502,0)
+											.rotateX(0).rotateY(38).rotateZ(60)
+											.translate([12.5,22,-35])
+											.mirrored(CSG.Plane.fromNormalAndPoint([0,1,0], [0,0,0])),
+											
+											CSG.cube({center: [0,0,0],radius: [1.5,7.5,25.025], resolution: 16}).setColor(0,0.502,0).rotateX(0)
+											.rotateY(38).rotateZ(60)
+											.translate([12.5,22,-35])
+											.mirrored(CSG.Plane.fromNormalAndPoint([0,1,0], [0,0,0]))
+											.mirrored(CSG.Plane.fromNormalAndPoint([1,0,0], [0,0,0])),
+											// alleggerimento
+											
+											
+											CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 0))
+											.translate([0,0,-19])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 9))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 18))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 27))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 36))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 45))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 54))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 63))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 72))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 81))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 90))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 99))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 108))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 117))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 126))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 135))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 144))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 153))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 162))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 171))
+											.translate([0,0,-19])])
+											.union([CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
+											.transform(CSG.Matrix4x4.rotation([0,0,0], [0,0,1], 180))
+											.translate([0,0,-19])])]).translate([0,0,-6.4]);
+											
+											
+											
+											return [mask, filter];
+												
+											}
+											
+											
+											</textarea>
+											
 										</div>
 									</div>
 								</div>
