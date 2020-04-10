@@ -21,7 +21,6 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
-		<link rel="stylesheet" href="openjscad.css" type="text/css">
 		
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 		<style>
@@ -50,7 +49,6 @@
 			  outline: none;
 			}
 			
-			canvas { cursor: move; }
 			
 		</style>
 <script>
@@ -79,7 +77,7 @@
 	}
 </script>
 	</head>
-	<body class="is-preload">
+	<body class="is-preload" onload="onload()">
 <!-- Wrapper -->
 <div id="wrapper">
 
@@ -107,7 +105,6 @@
 				<!-- Main -->
 				<div id="viewer">
 				</div>
-
 				<section id="onemain">
 					<div class="inner">
 						<div class="content">
@@ -115,10 +112,9 @@
 								<header class="major">
 									<h1>Main dishes</h1>
 								</header>
-											<body onload="onload()">
-											  
+											
 											An OpenJScad Mask parametric, 3d printable, reusable with interchange filter.
-											<div class="box" id="viewer">
+											<div id="viewer">
 
 											</div>
 											  <br>
