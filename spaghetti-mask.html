@@ -53,7 +53,31 @@
 			canvas { cursor: move; }
 			
 		</style>
+<script>
 
+	var gProcessor=null;
+	
+	// Show all exceptions to the user:
+	OpenJsCad.AlertUserOfUncaughtExceptions();
+	
+	function onload()
+	{
+	  gProcessor = new OpenJsCad.Processor(document.getElementById("viewer"));
+	  updateSolid();
+	}
+	
+	function updateSolid()
+	{
+	  gProcessor.setJsCad(document.getElementById('code').value);
+	}
+	function getExample(name) {
+	  var el = document.getElementById('code');
+	  $.get('examples/' + name, function(data) {
+		el.value = data;
+		updateSolid();
+	  });
+	}
+</script>
 	</head>
 	<body class="is-preload">
 <!-- Wrapper -->
@@ -91,33 +115,6 @@
 								<header class="major">
 									<h1>Main dishes</h1>
 								</header>
-										<script>
-				
-											var gProcessor=null;
-											
-											// Show all exceptions to the user:
-											OpenJsCad.AlertUserOfUncaughtExceptions();
-											
-											function onload()
-											{
-											  gProcessor = new OpenJsCad.Processor(document.getElementById("viewer"));
-											  updateSolid();
-											}
-											
-											function updateSolid()
-											{
-											  gProcessor.setJsCad(document.getElementById('code').value);
-											}
-											function getExample(name) {
-											  var el = document.getElementById('code');
-											  $.get('examples/' + name, function(data) {
-												el.value = data;
-												updateSolid();
-											  });
-											}
-										</script>
-											
-											
 											<body onload="onload()">
 											  
 											An OpenJScad Mask parametric, 3d printable, reusable with interchange filter.
