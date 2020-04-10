@@ -76,12 +76,12 @@ function getExample(name) {
 <body onload="onload()">
   <h1>Spaghetti-Mask</h1>
   <img src="spaghetti_mask.png"></img>
-Web based solid modeling in Javascript: user editable parametric models, STL and DXF export.
+An OpenJScad Mask parametric, 3d printable, reusable with interchange filter.
 <div id="viewer"></div>
-  <h2>Playground</h2>
-Try it by entering some code below. Anything you enter will be lost as soon as this page is reloaded;    
-to build your own models you should instead store them in a .jscad file on your computer 
-and use the ..
+  <br>
+<input type="submit" value="Update" onclick="updateSolid(); return false;">
+<h2>Expert Mod</h2>
+if you want partecipate in design spaghetti mask, try to modify the code below, update the render, and collaborate at the project via github :<href ="https://github.com/fablabcontea/fablabcontea.github.io">spaghetti_mask</href>
 <br><br> 
 <textarea id="code">
 function getParameterDefinitions() {
@@ -314,9 +314,7 @@ return [mask, filter];
 }
 
 
-</textarea><br>
-<input type="submit" value="Update" onclick="updateSolid(); return false;">
-<br><br>
+</textarea>
 <h2>Examples</h2>
 <div id="examples">
   <p>Choose another example:</p>
