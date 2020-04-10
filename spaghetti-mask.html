@@ -88,12 +88,13 @@
 											An OpenJScad Mask parametric, 3d printable, reusable with interchange filter.
 											<div id="viewer"></div>
 											  <br>
-											<input type="submit" value="Update" onclick="updateSolid(); return false;">
+											<!--<input type="submit" value="Update" onclick="updateSolid(); return false;">-->
+											
 											<h2>Expert Mode</h2>
 											if you want partecipate in design spaghetti mask, try to modify the code below, update the render, and collaborate at the project via github :<href ="https://github.com/fablabcontea/fablabcontea.github.io">spaghetti_mask</href>
 											<br><br> 
-											<textarea name="message" id="code" rows="15">
-<pre><code>						
+											<pre><code>	<textarea name="message" id="code" rows="15">
+					
 function getParameterDefinitions() {
 	return [
 		{ name: 'base_faccia', type: 'float', caption: 'base faccia (mm)',initial: 110},
@@ -322,9 +323,9 @@ CSG.cube({center: [0,0,0],radius: [0.75,42,12.5], resolution: 16})
 return [mask, filter];
 	
 }
-</code></pre>											
 											
-											</textarea>
+											
+											</textarea></code></pre>
 											
 										</div>
 									</div>
